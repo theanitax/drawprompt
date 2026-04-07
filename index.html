@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#F5A623">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DrawPrompt">
+<title>DrawPrompt</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --yellow: #F5A623;
+  --coral:  #E8574A;
+  --green:  #8BC34A;
+  --blue:   #4DB6E4;
+  --purple: #9C6FD6;
+  --teal:   #26A69A;
+  --dark:   #2C2C2C;
+}
+
+html, body {
+  min-height: 100dvh;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #EDEAE4;
+  color: var(--dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: var(--yellow);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+/* long shadow block */
+header::before {
+  content: '';
+  position: absolute;
+  bottom: -40px; right: -40px;
+  width: 120px; height: 120px;
+  background: rgba(0,0,0,0.1);
+  transform: rotate(45deg);
+}
+
+.logo { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+
+.logo-icon {
+  width: 38px; height: 38px;
+  background: var(--dark);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  bottom: -10px; right: -10px;
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.1);
+  transform: rotate(45deg);
+}
+
+.logo-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--dark);
+}
+
+.counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  background: rgba(0,0,0,0.13);
+  color: var(--dark);
+  padding: 4px 10px;
+  border-radius: 99px;
+  position: relative; z-index: 1;
+}
+
+/* ─── MAIN ─── */
+main { padding: 1.1rem; display: flex; flex-direction: column; gap: 0.9rem; }
+
+/* ─── FLAT CARD BASE ─── */
+.flat-card {
+  border-radius: 16px;
+  padding: 1.1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.flat-card::before {
+  content: '';
+  position: absolute;
+  bottom: -38px; right: -38px;
+  width: 110px; height: 110px;
+  background: rgba(0,0,0,0.09);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+/* ─── TOGGLES ─── */
+.toggles-card { background: var(--coral); }
+
+.card-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 0.7rem;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  transition: opacity 0.2s;
+}
+
+.toggle-row:last-child { border-bottom: none; }
+.toggle-row.off { opacity: 0.45; }
+
+.toggle-label {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 0.92rem; font-weight: 700; color: #fff;
+}
+
+.t-pip {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-row:not(.off) .t-pip { background: #fff; }
+
+/* Android toggle */
+.switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.sw-track {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.28);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.22s;
+}
+.sw-track::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  left: 3px; top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.22s cubic-bezier(0.34,1.5,0.64,1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+input:checked ~ .sw-track { background: rgba(255,255,255,0.38); }
+input:checked ~ .sw-track::after { transform: translateX(20px); }
+
+/* ─── RESULT ─── */
+.result-card {
+  background: var(--green);
+  min-height: 155px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  transition: background 0.35s;
+}
+
+.result-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.result-sentence {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+
+.result-sentence.empty {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+}
+
+.chips {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-top: 0.8rem;
+  position: relative; z-index: 1;
+}
+
+.chip {
+  font-size: 0.67rem; font-weight: 700;
+  padding: 3px 9px; border-radius: 99px;
+  background: rgba(255,255,255,0.28);
+  color: #fff;
+  animation: chipIn 0.28s cubic-bezier(0.34,1.5,0.64,1) both;
+}
+
+@keyframes chipIn {
+  from { transform: scale(0.55); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ─── GENERATE BTN ─── */
+.btn-generate {
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem; font-weight: 800;
+  letter-spacing: -0.01em;
+  cursor: pointer; width: 100%;
+  position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s;
+}
+
+.btn-generate::before {
+  content: '';
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 60px; height: 60px;
+  background: rgba(255,255,255,0.07);
+  transform: rotate(45deg);
+}
+
+.btn-generate:active { transform: scale(0.97); }
+
+/* ─── SEC BUTTONS ─── */
+.btn-row { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+
+.btn-sec {
+  background: var(--blue);
+  color: #fff; border: none;
+  border-radius: 12px;
+  padding: 0.72rem 0.4rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem; font-weight: 700;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.btn-sec::before {
+  content: '';
+  position: absolute;
+  bottom: -10px; right: -10px;
+  width: 32px; height: 32px;
+  background: rgba(0,0,0,0.1);
+  transform: rotate(45deg);
+}
+
+.btn-sec:active { transform: scale(0.96); }
+
+/* ─── SAVED ─── */
+.saved-wrap { display: none; }
+
+.saved-eyebrow {
+  font-size: 0.62rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: #999; margin-bottom: 0.6rem;
+}
+
+.saved-item {
+  background: #fff;
+  border-radius: 11px;
+  padding: 0.65rem 0.9rem 0.65rem 1rem;
+  margin-bottom: 6px;
+  font-size: 0.84rem; font-weight: 600;
+  color: var(--dark);
+  position: relative; overflow: hidden;
+}
+
+.saved-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--yellow);
+  border-radius: 4px 0 0 4px;
+}
+
+/* ─── INSTALL BAR ─── */
+.install-bar {
+  background: var(--yellow);
+  border-radius: 13px;
+  padding: 0.75rem 1rem;
+  display: none;
+  align-items: center; gap: 0.75rem;
+}
+
+.install-text { font-size: 0.78rem; font-weight: 600; color: var(--dark); flex: 1; line-height: 1.4; }
+
+.btn-install {
+  background: var(--dark); color: #fff; border: none;
+  border-radius: 99px; padding: 0.38rem 0.85rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.76rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+
+.btn-close-install { background: none; border: none; color: rgba(0,0,0,0.35); font-size: 1rem; cursor: pointer; }
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  left: 50%; transform: translateX(-50%) translateY(60px);
+  background: var(--dark); color: #fff;
+  padding: 0.5rem 1.1rem; border-radius: 99px;
+  font-size: 0.8rem; font-weight: 700;
+  pointer-events: none; white-space: nowrap; z-index: 99;
+  transition: transform 0.28s cubic-bezier(0.34,1.4,0.64,1);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M15 2 L20 7 L7.5 19.5 L2 21 L3.5 15.5 Z" fill="white"/>
+        <path d="M15 2 L20 7 L17.5 9.5 L12.5 4.5 Z" fill="rgba(255,255,255,0.35)"/>
+      </svg>
+    </div>
+    <span class="logo-name">DrawPrompt</span>
+  </div>
+  <span class="counter" id="counter">0 generados</span>
+</header>
+
+<main>
+
+  <div class="install-bar" id="installBar">
+    <div class="install-text">Instalá la app en tu pantalla de inicio</div>
+    <button class="btn-install" id="btnInstall">Instalar</button>
+    <button class="btn-close-install" id="btnCloseInstall">✕</button>
+  </div>
+
+  <!-- Toggles -->
+  <div class="flat-card toggles-card">
+    <div class="card-eyebrow">Listas activas</div>
+
+    <div class="toggle-row" id="row-sujeto">
+      <div class="toggle-label"><span class="t-pip"></span>Sujeto</div>
+      <label class="switch">
+        <input type="checkbox" id="tog-sujeto" checked onchange="toggleList('sujeto')">
+        <span class="sw-track"></span>
+      </label>
+    </div>
+
+    <div class="toggle-row" id="row-accion">
+      <div class="toggle-label"><span class="t-pip"></span>Acción</div>
+      <label class="switch">
+        <input type="checkbox" id="tog-accion" checked onchange="toggleList('accion')">
+        <span class="sw-track"></span>
+      </label>
+    </div>
+
+    <div class="toggle-row" id="row-elemento">
+      <div class="toggle-label"><span class="t-pip"></span>Elemento</div>
+      <label class="switch">
+        <input type="checkbox" id="tog-elemento" checked onchange="toggleList('elemento')">
+        <span class="sw-track"></span>
+      </label>
+    </div>
+
+    <div class="toggle-row" id="row-estilo">
+      <div class="toggle-label"><span class="t-pip"></span>Estilo</div>
+      <label class="switch">
+        <input type="checkbox" id="tog-estilo" checked onchange="toggleList('estilo')">
+        <span class="sw-track"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="flat-card result-card" id="resultCard">
+    <div class="card-eyebrow">Tu tema</div>
+    <div class="result-body">
+      <div class="result-sentence empty" id="resultSentence">Presioná el botón para generar tu primer tema.</div>
+    </div>
+    <div class="chips" id="chipsRow"></div>
+  </div>
+
+  <!-- Generate -->
+  <button class="btn-generate" onclick="generate()">Generar tema</button>
+
+  <!-- Actions -->
+  <div class="btn-row">
+    <button class="btn-sec" onclick="copyPrompt()">Copiar</button>
+    <button class="btn-sec" onclick="sharePrompt()">Compartir</button>
+    <button class="btn-sec" onclick="savePrompt()">Guardar</button>
+  </div>
+
+  <!-- Saved -->
+  <div class="saved-wrap" id="savedWrap">
+    <div class="saved-eyebrow">Guardados</div>
+    <div id="savedList"></div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  sujeto: ["un gato","un pulpo","un robot","una bruja","un dragón","un astronauta","un detective","una tortuga","un fantasma","una sirena","un samurái","un cocinero","una abuela","un oso polar","un pirata","una niña","un científico loco","un caballero","una hormiga gigante","un vampiro","un pingüino","una zorra","un genio","un ángel caído","una momia","un monstruo marino","una guerrera","un rey deprimido","una estatua viva","un alien turista"],
+  accion: ["persiguiendo","cocinando","bailando con","robando","cuidando","destruyendo","enamorándose de","huyendo de","coleccionando","montando","escondiéndose detrás de","pintando","luchando contra","soñando con","inventando","vendiendo","comprando","entrenando con","llorando sobre","riendo con","meditando junto a","conversando con","rescatando","saboteando","estudiando","fotografiando","reparando","disfrazándose de","ignorando olímpicamente","admirando"],
+  elemento: ["una silla rota","un paraguas gigante","un taco","una bombilla encendida","una espada de queso","una lavadora","un sombrero de copa","una planta carnívora","un televisor viejo","una torta de cumpleaños","una linterna","un reloj de arena","una llave enorme","un mapa del tesoro","una caja misteriosa","un libro volador","una taza de té","una bicicleta oxidada","un espejo mágico","una pelota de fútbol","una escalera infinita","un globo aerostático","una guitarra rota","una corona de flores","un submarino de juguete","una máquina del tiempo","un frasco de mermelada","un telescopio","una cama flotante","un cofre lleno de sombras"],
+  estilo: ["terror","comedia","suspenso","drama","acción","ciencia ficción","romance","fantasía épica","western","noir","anime","documental","musical","shonen","superhéroes","cine de arte","slasher","road movie","thriller psicológico","comedia romántica","cine mudo","steampunk","cyberpunk","realismo mágico","spaghetti western","animación infantil","película de catástrofes","terror japonés","cómic europeo","fábula medieval"]
+};
+
+const BG = ['#8BC34A','#4DB6E4','#E8574A','#F5A623','#9C6FD6','#26A69A'];
+let bgIdx = 0;
+const active = { sujeto:true, accion:true, elemento:true, estilo:true };
+let current = null;
+let totalCount = parseInt(localStorage.getItem('dp-count')||'0');
+let saved = JSON.parse(localStorage.getItem('dp-saved')||'[]');
+let deferredPrompt = null;
+
+updateCounter(); renderSaved();
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function toggleList(key){
+  active[key] = document.getElementById('tog-'+key).checked;
+  document.getElementById('row-'+key).classList.toggle('off', !active[key]);
+}
+
+function generate(){
+  const keys = Object.keys(active).filter(k=>active[k]);
+  if(!keys.length) return showToast('Activá al menos una lista');
+
+  const parts = {};
+  keys.forEach(k => parts[k] = pick(DATA[k]));
+  current = parts;
+
+  totalCount++;
+  localStorage.setItem('dp-count', totalCount);
+  updateCounter();
+
+  const card = document.getElementById('resultCard');
+  card.style.background = BG[bgIdx % BG.length];
+  bgIdx++;
+
+  const order = ['sujeto','accion','elemento'];
+  const base = order.filter(k=>parts[k]).map(k=>parts[k]).join(' ');
+  const full = base + (parts.estilo ? ' — al estilo ' + parts.estilo : '');
+
+  const el = document.getElementById('resultSentence');
+  el.textContent = full;
+  el.classList.remove('empty');
+
+  const labels = {sujeto:'sujeto',accion:'acción',elemento:'elemento',estilo:'estilo'};
+  const row = document.getElementById('chipsRow');
+  row.innerHTML = '';
+  ['sujeto','accion','elemento','estilo'].filter(k=>parts[k]).forEach((k,i)=>{
+    const c = document.createElement('span');
+    c.className = 'chip';
+    c.style.animationDelay = i*50+'ms';
+    c.textContent = labels[k]+': '+parts[k];
+    row.appendChild(c);
+  });
+}
+
+function getText(){
+  if(!current) return null;
+  const base = ['sujeto','accion','elemento'].filter(k=>current[k]).map(k=>current[k]).join(' ');
+  return base + (current.estilo ? ' — al estilo '+current.estilo : '');
+}
+
+function copyPrompt(){
+  const t=getText(); if(!t) return showToast('Generá un tema primero');
+  navigator.clipboard.writeText(t).then(()=>showToast('Copiado'));
+}
+
+function sharePrompt(){
+  const t=getText(); if(!t) return showToast('Generá un tema primero');
+  if(navigator.share) navigator.share({title:'DrawPrompt',text:t});
+  else copyPrompt();
+}
+
+function savePrompt(){
+  const t=getText(); if(!t) return showToast('Generá un tema primero');
+  if(saved.includes(t)) return showToast('Ya guardado');
+  saved.unshift(t);
+  if(saved.length>20) saved.pop();
+  localStorage.setItem('dp-saved',JSON.stringify(saved));
+  renderSaved(); showToast('Guardado');
+}
+
+function renderSaved(){
+  const list=document.getElementById('savedList');
+  const wrap=document.getElementById('savedWrap');
+  list.innerHTML='';
+  if(!saved.length){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  saved.forEach(t=>{
+    const el=document.createElement('div');
+    el.className='saved-item';
+    el.textContent=t;
+    list.appendChild(el);
+  });
+}
+
+function updateCounter(){
+  document.getElementById('counter').textContent = totalCount===1?'1 generado':totalCount+' generados';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredPrompt=e;
+  document.getElementById('installBar').style.display='flex';
+});
+document.getElementById('btnInstall').onclick=()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{
+    document.getElementById('installBar').style.display='none';
+    deferredPrompt=null;
+  });
+};
+document.getElementById('btnCloseInstall').onclick=()=>{
+  document.getElementById('installBar').style.display='none';
+};
+window.addEventListener('appinstalled',()=>showToast('App instalada'));
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
