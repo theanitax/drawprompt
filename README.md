@@ -1,2 +1,2 @@
-# drawprompt.github.io
+# drawprompt
 ideas para diujar!
