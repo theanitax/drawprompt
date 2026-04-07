@@ -110,7 +110,7 @@ main { padding: 1.1rem; display: flex; flex-direction: column; gap: 0.9rem; }
 }
 
 /* ─── TOGGLES ─── */
-.toggles-card { background: var(--green); }
+.toggles-card { background: var(--coral); }
 
 .card-eyebrow {
   font-size: 0.62rem;
@@ -121,16 +121,22 @@ main { padding: 1.1rem; display: flex; flex-direction: column; gap: 0.9rem; }
   margin-bottom: 0.7rem;
 }
 
+.toggles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 0.5rem;
+}
+
 .toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0;
+  padding: 0.45rem 0;
   border-bottom: 1px solid rgba(255,255,255,0.15);
   transition: opacity 0.2s;
 }
 
-.toggle-row:last-child { border-bottom: none; }
+.toggle-row:nth-last-child(-n+2) { border-bottom: none; }
 .toggle-row.off { opacity: 0.45; }
 
 .toggle-label {
@@ -313,6 +319,69 @@ input:checked ~ .sw-track::after { transform: translateX(20px); }
 
 .btn-close-install { background: none; border: none; color: rgba(0,0,0,0.35); font-size: 1rem; cursor: pointer; }
 
+/* ─── FOOTER ─── */
+footer {
+  background: var(--dark);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: -30px; left: -30px;
+  width: 80px; height: 80px;
+  background: rgba(255,255,255,0.04);
+  transform: rotate(45deg);
+}
+
+.footer-text {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.4;
+  position: relative; z-index: 1;
+}
+
+.footer-text strong {
+  color: rgba(255,255,255,0.75);
+  font-weight: 700;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+
+.btn-footer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.75);
+  border: none;
+  border-radius: 99px;
+  padding: 0.4rem 0.85rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-footer:hover { background: rgba(255,255,255,0.14); }
+
+.btn-footer svg { flex-shrink: 0; }
+
 /* ─── TOAST ─── */
 .toast {
   position: fixed;
@@ -353,37 +422,48 @@ input:checked ~ .sw-track::after { transform: translateX(20px); }
   <!-- Toggles -->
   <div class="flat-card toggles-card">
     <div class="card-eyebrow">Listas activas</div>
+    <div class="toggles-grid">
 
-    <div class="toggle-row" id="row-sujeto">
-      <div class="toggle-label"><span class="t-pip"></span>Sujeto</div>
-      <label class="switch">
-        <input type="checkbox" id="tog-sujeto" checked onchange="toggleList('sujeto')">
-        <span class="sw-track"></span>
-      </label>
-    </div>
+      <div class="toggle-row" id="row-sujeto">
+        <div class="toggle-label"><span class="t-pip"></span>Sujeto</div>
+        <label class="switch">
+          <input type="checkbox" id="tog-sujeto" checked onchange="toggleList('sujeto')">
+          <span class="sw-track"></span>
+        </label>
+      </div>
 
-    <div class="toggle-row" id="row-accion">
-      <div class="toggle-label"><span class="t-pip"></span>Acción</div>
-      <label class="switch">
-        <input type="checkbox" id="tog-accion" checked onchange="toggleList('accion')">
-        <span class="sw-track"></span>
-      </label>
-    </div>
+      <div class="toggle-row" id="row-accion">
+        <div class="toggle-label"><span class="t-pip"></span>Acción</div>
+        <label class="switch">
+          <input type="checkbox" id="tog-accion" checked onchange="toggleList('accion')">
+          <span class="sw-track"></span>
+        </label>
+      </div>
 
-    <div class="toggle-row" id="row-elemento">
-      <div class="toggle-label"><span class="t-pip"></span>Elemento</div>
-      <label class="switch">
-        <input type="checkbox" id="tog-elemento" checked onchange="toggleList('elemento')">
-        <span class="sw-track"></span>
-      </label>
-    </div>
+      <div class="toggle-row" id="row-elemento">
+        <div class="toggle-label"><span class="t-pip"></span>Elemento</div>
+        <label class="switch">
+          <input type="checkbox" id="tog-elemento" checked onchange="toggleList('elemento')">
+          <span class="sw-track"></span>
+        </label>
+      </div>
 
-    <div class="toggle-row" id="row-estilo">
-      <div class="toggle-label"><span class="t-pip"></span>Estilo</div>
-      <label class="switch">
-        <input type="checkbox" id="tog-estilo" checked onchange="toggleList('estilo')">
-        <span class="sw-track"></span>
-      </label>
+      <div class="toggle-row" id="row-estilo">
+        <div class="toggle-label"><span class="t-pip"></span>Estilo</div>
+        <label class="switch">
+          <input type="checkbox" id="tog-estilo" checked onchange="toggleList('estilo')">
+          <span class="sw-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row" id="row-escenario">
+        <div class="toggle-label"><span class="t-pip"></span>Escenario</div>
+        <label class="switch">
+          <input type="checkbox" id="tog-escenario" checked onchange="toggleList('escenario')">
+          <span class="sw-track"></span>
+        </label>
+      </div>
+
     </div>
   </div>
 
@@ -416,17 +496,34 @@ input:checked ~ .sw-track::after { transform: translateX(20px); }
 
 <div class="toast" id="toast"></div>
 
+<footer>
+  <div class="footer-text">
+    <strong>DrawPrompt</strong><br>
+    ¿Sugerencias o ideas?
+  </div>
+  <div class="footer-actions">
+    <a class="btn-footer" href="mailto:feedback@drawprompt.app?subject=Feedback%20DrawPrompt">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/>
+        <path d="M1 4.5 L7 8.5 L13 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+      </svg>
+      Escribinos
+    </a>
+  </div>
+</footer>
+
 <script>
 const DATA = {
   sujeto: ["un gato","un pulpo","un robot","una bruja","un dragón","un astronauta","un detective","una tortuga","un fantasma","una sirena","un samurái","un cocinero","una abuela","un oso polar","un pirata","una niña","un científico","un caballero","una hormiga","un vampiro","un pingüino","una zorra","un genio","un ángel","una momia","un monstruo marino","una guerrera","un rey","una estatua","un alien","un tigre","un león","un axolotle","un perro","un gato","un deportista","un militar","un hombre","una mujer","un superhéroe","un caballo","un mono","un intelectual","un médico","un marinero","un bebé","una mariposa","un ave","una modelo","una princesa","un pez","una víbora","alguien muy alto","alguin muy bajo","un ladrón","un indio","una llama","un canguro","un nativo","un duende","un músico",],
   accion: ["persiguiendo","cocinando","bailando con","robando","cuidando","destruyendo","enamorándose de","huyendo de","coleccionando","montando","escondiéndose detrás de","pintando","luchando contra","soñando con","inventando","vendiendo","posando","entrenando con","llorando con","riendo con","meditando junto a","conversando con","rescatando","saltando","estudiando","fotografiando","reparando","disfrazándose de","nadando","admirando","trepando","esquivando"],
   elemento: ["una silla","un paraguas","un taco","una bombilla","una espada","una lavadora","un sombrero de copa","una planta carnívora","un televisor viejo","una torta de cumpleaños","una linterna","un reloj de arena","una llave enorme","un mapa","una caja misteriosa","un libro","una taza de té","una bicicleta","un espejo","una pelota","una escalera","un globo aerostático","una guitarra","una corona","un submarino","una máquina del tiempo","un frasco de mermelada","un telescopio","una cama","un cofre","una espada","una lámpara","un cepillo","un diente","un cartel","un árbol","una patineta","una moto","un teléfono","un bolso","una estrella","una nave","una flauta","un tornillo","una esfera","un sol","unos lentes","unos huesos","una cuhcara","una radio","un billete","una remera de futbol","un chocolate","una fruta","un tatuaje"],
-  estilo: ["terror","comedia","suspenso","drama","acción","ciencia ficción","romance","fantasía épica","western","noir","anime","documental","musical","superhéroes","cine de arte","slasher","road movie","thriller psicológico","comedia romántica","cine mudo","steampunk","realismo mágico","animación infantil","catástrofes","terror japonés","cómic","fábula medieval"]
+  estilo: ["terror","comedia","suspenso","drama","acción","ciencia ficción","romance","fantasía épica","western","noir","anime","documental","musical","superhéroes","cine de arte","slasher","road movie","thriller psicológico","comedia romántica","cine mudo","steampunk","realismo mágico","animación infantil","catástrofes","terror japonés","cómic","fábula medieval"],
+  escenario: ["un río","una montaña","un desierto","un bosque oscuro","una ciudad futurista","el fondo del mar","un castillo en ruinas","una estación espacial","un mercado medieval","una playa al atardecer","un volcán activo","una cueva misteriosa","un campo de flores","una estación de tren abandonada","un callejón lluvioso","una biblioteca infinita","un circo","un cementerio","una selva tropical","un iglú","un rascacielos","un parque de diversiones","una isla desierta","un laberinto","una feria rural","una azotea de ciudad","un acantilado","un pantano","un pueblo fantasma","una catedral gótica"]
 };
 
-const BG = ['#8BC34A','#4DB6E4','#E8574A','#F5A623','#9C6FD6','#26A69A'];
+const BG = ['#4DB6E4','#E8574A','#F5A623','#9C6FD6','#26A69A','#E07B3A','#5B8DD9','#C44569'];
 let bgIdx = 0;
-const active = { sujeto:true, accion:true, elemento:true, estilo:true };
+const active = { sujeto:true, accion:true, elemento:true, estilo:true, escenario:true };
 let current = null;
 let totalCount = parseInt(localStorage.getItem('dp-count')||'0');
 let saved = JSON.parse(localStorage.getItem('dp-saved')||'[]');
@@ -459,16 +556,18 @@ function generate(){
 
   const order = ['sujeto','accion','elemento'];
   const base = order.filter(k=>parts[k]).map(k=>parts[k]).join(' ');
-  const full = base + (parts.estilo ? ' — al estilo ' + parts.estilo : '');
+  const escPart = parts.escenario ? ' en ' + parts.escenario : '';
+  const estiloPart = parts.estilo ? ' — al estilo ' + parts.estilo : '';
+  const full = base + escPart + estiloPart;
 
   const el = document.getElementById('resultSentence');
   el.textContent = full;
   el.classList.remove('empty');
 
-  const labels = {sujeto:'sujeto',accion:'acción',elemento:'elemento',estilo:'estilo'};
+  const labels = {sujeto:'sujeto',accion:'acción',elemento:'elemento',estilo:'estilo',escenario:'escenario'};
   const row = document.getElementById('chipsRow');
   row.innerHTML = '';
-  ['sujeto','accion','elemento','estilo'].filter(k=>parts[k]).forEach((k,i)=>{
+  ['sujeto','accion','elemento','escenario','estilo'].filter(k=>parts[k]).forEach((k,i)=>{
     const c = document.createElement('span');
     c.className = 'chip';
     c.style.animationDelay = i*50+'ms';
@@ -480,7 +579,9 @@ function generate(){
 function getText(){
   if(!current) return null;
   const base = ['sujeto','accion','elemento'].filter(k=>current[k]).map(k=>current[k]).join(' ');
-  return base + (current.estilo ? ' — al estilo '+current.estilo : '');
+  const escPart = current.escenario ? ' en ' + current.escenario : '';
+  const estiloPart = current.estilo ? ' — al estilo ' + current.estilo : '';
+  return base + escPart + estiloPart;
 }
 
 function copyPrompt(){
